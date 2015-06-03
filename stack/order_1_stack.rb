@@ -4,43 +4,45 @@ require_relative 'stack'
 def stack_order(unordered_stack)
   # This stack will be sorted
   ordered_stack = MyStack.new()
-  # a temporary place to hold the node to help find it's right place
-  # in the ordered stack
-  temp_node = nil
   # stack to temporarily hold ordered stack when finding the right place
   # for the temp_node
   temp_stack = MyStack.new()
 
-  print_step(unordered_stack, ordered_stack, temp_stack, temp_node)
+  print_step(unordered_stack, ordered_stack, temp_stack)
 
   # pop unordered stack into temp_node until unordered stack is empty
   until(unordered_stack.empty?)
-    temp_node = unordered_stack.pop
 
-
-    print_step(unordered_stack, ordered_stack, temp_stack, temp_node)
-
-    # when temp_node is smaller than top node of ordered_stack
-    # or ordered_stack is empty, push temp_node in
-    until(ordered_stack.empty? || temp_node.data < ordered_stack.top.data)
-      temp_stack.push(ordered_stack.pop)
-      print_step(unordered_stack, ordered_stack, temp_stack, temp_node)
+    if(!ordered_stack.empty? && unordered_stack.top.data < ordered_stack.top.data)
+      ordered_stack.push(unordered_stack.pop)
     end
 
-    print_step(unordered_stack, ordered_stack, temp_stack, temp_node)
+    print_step(unordered_stack, ordered_stack, temp_stack)
 
-    ordered_stack.push(temp_node)
-    temp_node = nil
 
-    print_step(unordered_stack, ordered_stack, temp_stack, temp_node)
+    # when top node of unordered stack is smaller than top node of ordered_stack
+    # or ordered_stack is empty, push top node of unordered stack in
+    if(!unordered_stack.empty?)
+      until(ordered_stack.empty? || unordered_stack.top.data < ordered_stack.top.data)
+        temp_stack.push(ordered_stack.pop)
+        print_step(unordered_stack, ordered_stack, temp_stack)
+      end
+
+    print_step(unordered_stack, ordered_stack, temp_stack)
+
+    ordered_stack.push(unordered_stack.pop)
+
+    print_step(unordered_stack, ordered_stack, temp_stack)
+
+    end
 
     # put temp_stack back into ordered_stack
     until(temp_stack.empty?)
       ordered_stack.push(temp_stack.pop)
-      print_step(unordered_stack, ordered_stack, temp_stack, temp_node)
+      print_step(unordered_stack, ordered_stack, temp_stack)
     end
 
-    print_step(unordered_stack, ordered_stack, temp_stack, temp_node)
+    print_step(unordered_stack, ordered_stack, temp_stack)
   end
 
   # stack is now ordered!
@@ -48,13 +50,12 @@ def stack_order(unordered_stack)
 end
 
 
-def print_step(unordered_stack, ordered_stack, temp_stack, temp_node)
+def print_step(unordered_stack, ordered_stack, temp_stack)
 
   print "\e[H\e[2J"
   puts "#{unordered_stack.empty? ? 'nil' : unordered_stack.top.print_node}"
   puts "#{ordered_stack.empty? ? 'nil' : ordered_stack.top.print_node}"
   puts "#{temp_stack.empty? ? 'nil' : temp_stack.top.print_node}"
-  puts "Node: #{temp_node.nil? ? 'nil' : temp_node.data}"
   puts
   puts '----------------------------------'
   puts
